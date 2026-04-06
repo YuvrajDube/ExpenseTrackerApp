@@ -1,0 +1,97 @@
+package com.example.expensetracker.screen
+
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
+import com.example.expensetracker.R
+import com.example.expensetracker.ui.theme.Added
+import com.example.expensetracker.viewmodel.HomeViewModel
+import com.example.expensetracker.viewmodel.HomeViewModelFactory
+import com.example.expensetracker.widget.ExpenseTextView
+import java.text.SimpleDateFormat
+import java.util.Locale
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun TransactionTypeDetailScreen(navController: NavController, transactionType: String) {
+    val context = LocalContext.current
+    val homeViewModel: HomeViewModel = viewModel(factory = HomeViewModelFactory(context))
+    val expensesState by homeViewModel.expenses.collectAsState(initial = emptyList())
+
+    // helper: parse date
+    fun parseDateToMillis(dateStr: String): Long {
+        return try {
+            SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).parse(dateStr)?.time ?: 0L
+        } catch (_: Exception) { 0L }
+    }
+
+    val typeExpenses = expensesState
+        .filter { it.type.equals(transactionType, ignoreCase = true) }
+        .sortedByDescending { parseDateToMillis(it.date) }
+
+    val isIncome = transactionType.equals("Income", ignoreCase = true)
+
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = {
+                    ExpenseTextView(
+                        text = "$transactionType Transactions",
+                        fontSize = 22.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.White
+                    )
+                },
+                navigationIcon = {
+                    IconButton(onClick = { navController.popBackStack() }) {
+                        Icon(Icons.Default.ArrowBack, contentDescription = "Back", tint = Color.White)
+                    }
+                },
+                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = Added)
+            )
+        }
+    ) { innerPadding ->
+        Surface(modifier = Modifier.fillMaxSize().padding(innerPadding)) {
+            if (typeExpenses.isEmpty()) {
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    ExpenseTextView(text = "No transactions found for $transactionType", fontSize = 16.sp, color = Color.Gray)
+                }
+            } else {
+                LazyColumn(modifier = Modifier.fillMaxSize().background(Color.White)) {
+                    items(typeExpenses) { item ->
+                        TransactionItem(
+                            item = item,
+                            icon = if (isIncome) R.drawable.profit else R.drawable.loss,
+                            color = if (isIncome) Added else Color.Red,
+                            onUpdate = { updatedItem -> homeViewModel.updateExpense(updatedItem) },
+                            onDelete = { homeViewModel.deleteExpense(item.id) }
+                        )
+                    }
+                }
+            }
+        }
+    }
+}

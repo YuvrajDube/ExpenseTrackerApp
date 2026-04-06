@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CopilotDiffPersistence">
+    <option name="pendingDiffs">
+      <map>
+        <entry key="$PROJECT_DIR$/app/src/main/java/com/example/expensetracker/screen/AddExpenseScreen.kt">
+          <value>
+            <PendingDiffInfo>
+              <option name="filePath" value="$PROJECT_DIR$/app/src/main/java/com/example/expensetracker/screen/AddExpenseScreen.kt" />
+              <option name="updatedContent" value="// ...existing code...&#10;import com.example.expensetracker.viewmodel.AddExpenseViewModel&#10;import com.example.expensetracker.viewmodel.AddExpenseViewModelFactory&#10;import com.example.expensetracker.widget.ExpenseTextView&#10;import androidx.lifecycle.viewmodel.compose.viewModel&#10;import java.text.SimpleDateFormat&#10;import java.util.Calendar&#10;import java.util.Locale&#10;&#10;// ─────────────────────────────────────────────&#10;//  AddExpenseScreen&#10;// ─────────────────────────────────────────────&#10;@OptIn(ExperimentalMaterial3Api::class)&#10;@Composable&#10;fun AddExpenseScreen(navController: NavController) {&#10;    val viewModel: AddExpenseViewModel = viewModel(factory = AddExpenseViewModelFactory(LocalContext.current))&#10;&#10;    val scrollState = rememberScrollState()&#10;// ...existing code..." />
+            </PendingDiffInfo>
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+</project>

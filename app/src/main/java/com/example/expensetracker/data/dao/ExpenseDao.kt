@@ -11,8 +11,11 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface ExpenseDao {
-    @Query("SELECT * FROM expenses_table")
+    @Query("SELECT * FROM expenses_table ORDER BY date DESC")
     fun getAllExpenses(): Flow<List<ExpenseEntity>>
+
+    @Query("SELECT DISTINCT category FROM expenses_table WHERE category IS NOT NULL AND category != ''")
+    fun getDistinctCategories(): Flow<List<String>>
 
     @Insert()
     suspend fun insertExpense(expenseEntity: ExpenseEntity)

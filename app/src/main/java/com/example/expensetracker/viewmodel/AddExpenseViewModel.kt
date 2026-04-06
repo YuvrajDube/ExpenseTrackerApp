@@ -1,6 +1,7 @@
 package com.example.expensetracker.viewmodel
 
 import android.content.Context
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.example.expensetracker.data.ExpenseDatabase
@@ -11,8 +12,10 @@ class AddExpenseViewModel(val dao: ExpenseDao): ViewModel() {
     suspend fun addExpense(expenseEntity: ExpenseEntity): Boolean {
         return try {
             dao.insertExpense(expenseEntity)
+            Log.d("AddExpenseViewModel", "Inserted expense: $expenseEntity")
             true
         } catch (ex:Throwable){
+            Log.e("AddExpenseViewModel", "Failed to insert expense", ex)
             false
         }
     }

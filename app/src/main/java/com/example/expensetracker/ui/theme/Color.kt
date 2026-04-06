@@ -14,4 +14,4 @@ val Greenn = Color(0xFF2F7E79)
 
 val Grayy = Color(0xFFE5F1EC)
 
-
+val Added = Color(0xFF429690)

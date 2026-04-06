@@ -4,7 +4,6 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import androidx.room.migration.Migration
 import com.example.expensetracker.data.dao.ExpenseDao
 import com.example.expensetracker.data.model.ExpenseEntity
 
@@ -15,11 +14,20 @@ abstract class ExpenseDatabase : RoomDatabase() {
     companion object {
         const val DATABASE_NAME = "expense_database"
 
+        @Volatile
+        private var INSTANCE: ExpenseDatabase? = null
+
         @JvmStatic
         fun getDatabase(context: Context): ExpenseDatabase {
-            return Room.databaseBuilder(
-                context, ExpenseDatabase::class.java, DATABASE_NAME
-            ).fallbackToDestructiveMigration().build()
+            return INSTANCE ?: synchronized(this) {
+                val instance = Room.databaseBuilder(
+                    context.applicationContext,
+                    ExpenseDatabase::class.java,
+                    DATABASE_NAME
+                ).fallbackToDestructiveMigration().build()
+                INSTANCE = instance
+                instance
+            }
         }
     }
 }
