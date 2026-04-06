@@ -13,3 +13,16 @@
 .externalNativeBuild
 .cxx
 local.properties
+
+# Keystore files (Critical for security)
+*.jks
+*.keystore
+*.p12
+*.key
+
+# Ensure module-level build directories are ignored
+build/
+*/build/
+
+# Google Services configuration (if you add Firebase later)
+google-services.json
